@@ -4,6 +4,7 @@
 <input type="submit" />
 </form>
 {% if ward %}
-	{{ ward.name }}
+	{{ ward.name }} ({{ ward.district }})
+	<b>{{ ward.biggest }}</b>
 {% endif %}
 </html>

@@ -1,13 +1,19 @@
 import os
 
 import csv
+import re
 
 from model import Ward
 
 import logging
 
+import urllib
+
+from BeautifulSoup import BeautifulSoup
+
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
+from google.appengine.api import urlfetch
 
 class ModelAndViewPage(webapp.RequestHandler):
 	def render(self, view, model={}):
@@ -21,6 +27,22 @@ class DisplayWard(ModelAndViewPage):
 			self.render('display', {'ward': wards[0] })
 		else:
 			self.render('display')
+
+class Search(ModelAndViewPage):
+	def get(self):
+		self.render('search')
+	
+	def post(self):
+		url = 'http://www.writetothem.com/who?' + urllib.urlencode({'pc': self.request.get('postcode')})
+		result = urlfetch.fetch(url)
+		soup = BeautifulSoup(result.content)
+		logging.warn(result.content)
+		logging.warn('Stuff %s' % soup.findAll(attrs={'class': 'firstcol'}))
+		para = soup.findAll(attrs={'class': 'firstcol'})[1].findAll('p')[0]
+		search = re.search('\d+ (.*) District Councillors', str(para))
+		if not search:
+			search = re.search('\d+ (.*) Councillors', str(para))
+		self.redirect('/display?' + urllib.urlencode({'name': search.group(1)}))
 
 class Uploader(ModelAndViewPage):
 	def get(self):

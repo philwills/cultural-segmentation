@@ -1,6 +1,6 @@
 <html>
-<form>
-<input type="text" name="name" />
+<form action="/" method="post">
+<input type="text" name="postcode" />
 <input type="submit" />
 </form>
 {% if ward %}

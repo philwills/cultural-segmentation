@@ -6,6 +6,7 @@ from controller import *
 application = webapp.WSGIApplication([
 									('/upload', Uploader),
 									('/display', DisplayWard),
+									('/', Search),
 									], debug=True)
 		
 def main():
